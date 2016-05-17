@@ -1,14 +1,8 @@
 Tutorial on version control
 ========
 
-Proposed date: 2016/03/31
-
-#### Content
-* Why version control?
-* `Git`
-* GitHub
-* Collaboration
-
+#### Version control
+* [Version what?](https://github.com/TGuillermeTeaching/VersionControl)
 
 #### Links
 * [Everything you need to do!](http://rogerdudler.github.io/git-guide/)
