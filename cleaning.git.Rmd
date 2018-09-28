@@ -1,0 +1,106 @@
+---
+title: "Cleaning a git repo"
+author: "Thomas Guillerme"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    fig_width: 12
+    fig_height: 6
+---
+
+Sometimes (especially when dealing with big datasets) your git repository can become incredibly slow.
+This can happen when you do a lot of commits on some big files: each commits create a time-copy of the big files and you end up with hundreds of copies of it (hence the massive processing time).
+
+This tutorial explains how to reduce this problem, based on [this](https://rtyley.github.io/bfg-repo-cleaner/#usage) and [this](http://stevelorek.com/how-to-shrink-a-git-repository.html) tutorial.
+All commands are in shell/bash and should be run from the first level of the problematic directory.
+
+
+## 1. Check if the problem comes from the git history
+
+First let's check if the problem is the big git history (if not, this tutorial won't be useful!).
+In the directory, run:
+
+```
+du -sh .git
+```
+
+If you end up with a big number (say >100 MB), that's where the problem lies!
+
+Then make sure nothing is currently using your folder (e.g. `git.exe` in Windows, `R`. etc.).
+
+## 2. Backup your current work
+
+In a new temporary folder somewhere else (say in the Desktop), copy/paste the subfolders in the directory you where working on (e.g. `Analysis/`, `Data/`, etc.).
+
+> If you need to save all the subfolders in the directory **don't** directly copy/paste the whole directory but do it subfolder by subfolder (otherwise you will also copy the big `.git` folder we want to get rid of!).
+
+## 3. Copy the [BFG Repo Cleaner](http://repo1.maven.org/maven2/com/madgag/bfg/1.13.0/bfg-1.13.0.jar) java-script
+
+Pretty straightforward.
+Make sure you have Java 6 or + installed on your machine.
+
+## 4. Remove the whole repository and empty the bin.
+
+Go at the level where your repository was (for example `my_projects` if you were in `my_projects/landmark-test` - you can use `cd ..` in bash to navigate one level back).
+
+```
+cd ..
+```
+
+Completely delete everything (hence the backing up before hand).
+
+```
+rm -R landmark-test/
+```
+
+If some message gets prompted, answer yes (`y` + enter).
+
+
+## 5. Copy a mirror of the repository
+
+```
+git clone --mirror git://github.com/tguillerme/landmark-test.git
+```
+
+## 6. Run the BFG Repo Cleaner thing
+
+Here we will remove all the bits bigger than 20 Mb.
+
+```
+java -jar bfg.jar --strip-blobs-bigger-than 20M landmark-test.git
+```
+
+## 7. Fix the repository history
+
+You can then use git to fix up the history (with the removed big files):
+
+```
+cd landmark-test.git
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+```
+
+## 8. Push the cleaned up repo
+
+```
+git push
+```
+
+## 9. Re-clone the repo normally
+
+Go back one level in your repository and delete the mirror repo:
+
+```
+cd ..
+rm -R landmark-test.git
+```
+
+If some message gets prompted, answer yes (`y` + enter).
+
+
+And reinstall the new git repo:
+
+```
+git clone git://github.com/tguillerme/landmark-test
+```
+
+Add the files you've changed manually (e.g. in `Analysis/` etc.) and go back to working/pulling/pushing with them normally.
