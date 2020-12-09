@@ -2,7 +2,7 @@ Tutorial on version control
 ========
 
 #### Version control
-* [Version what?](https://github.com/TGuillermeTeaching/VersionControl)
+* [Version what?](https://github.com/TGuillermeTeaching/VersionControl/blob/master/VersionControl.pdf)
 
 #### Links
 * [Everything you need to do!](http://rogerdudler.github.io/git-guide/)
